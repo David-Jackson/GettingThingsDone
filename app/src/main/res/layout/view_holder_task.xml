@@ -16,27 +16,17 @@
 
         <CheckBox
             android:id="@+id/cb_task_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/card_list_item_padding_vert"
-            android:layout_marginTop="@dimen/card_list_item_padding_vert"
-            android:layout_marginStart="@dimen/card_list_item_padding_horz"
-            android:layout_marginLeft="@dimen/card_list_item_padding_horz"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_task_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/card_list_item_padding_vert"
-            android:layout_marginTop="@dimen/card_list_item_padding_vert"
+            android:layout_marginEnd="@dimen/card_list_item_padding_horz"
             android:layout_marginStart="@dimen/card_list_item_padding_horz"
-            android:layout_marginLeft="@dimen/card_list_item_padding_horz"
+            android:layout_marginTop="@dimen/card_list_item_padding_vert"
+            android:paddingRight="@dimen/card_list_item_padding_horz"
+            android:paddingLeft="@dimen/card_list_item_padding_horz"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cb_task_status"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Task Name" />
 

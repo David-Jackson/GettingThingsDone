@@ -1,5 +1,6 @@
 package fyi.jackson.drew.gettingthingsdone.recycler;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -99,8 +100,12 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void onBindTaskViewHolder(TaskViewHolder holder, int position) {
         Task task = (Task) sortedTaskList.get(position);
-        holder.tvTaskName.setText(task.getName());
-        holder.cbTaskStatus.setChecked(task.getDone());
+        holder.cbTask.setText(task.getName());
+        holder.cbTask.setChecked(task.getDone());
+        if (task.getDone()) {
+            holder.cbTask.setPaintFlags(
+                    holder.cbTask.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
     }
 
     private class BucketBottom {
