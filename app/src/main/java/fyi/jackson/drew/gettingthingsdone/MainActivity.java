@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import java.util.List;
 
 import fyi.jackson.drew.gettingthingsdone.data.DummyData;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
+import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private NavigationView navigationView;
+    private RecyclerView rvTaskList;
+    private TaskAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setupComponents() {
+    private void setupComponents() {
         setupToolbarAndDrawer();
         setupFab();
+        setupRecycler();
     }
 
-    public void setupToolbarAndDrawer() {
+    private void setupToolbarAndDrawer() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -94,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         fillMenu(DummyData.buckets);
     }
 
-    public void setupFab() {
+    private void setupFab() {
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +111,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupRecycler() {
+        rvTaskList = findViewById(R.id.rv_task_list);
+
+        taskAdapter = new TaskAdapter(DummyData.tasks);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+
+        rvTaskList.setAdapter(taskAdapter);
+        rvTaskList.setLayoutManager(layoutManager);
+    }
+
     // This method dynamically fills the drawer menu based on the Buckets data
-    public void fillMenu(List<Bucket> buckets) {
+    private void fillMenu(List<Bucket> buckets) {
         Menu menu = navigationView.getMenu();
         SubMenu subMenu = menu.addSubMenu("Buckets");
 
