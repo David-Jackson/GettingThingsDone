@@ -22,7 +22,7 @@ public class DummyData {
         add(new Task("Laundry", "Home", 1523618945L, 1523623545L, true));
         add(new Task("A neat idea!", "Inbox", 1523627945L, null, false));
         add(new Task("Do taxes", "Inbox", 1523624925L, null, false));
-        add(new Task("A very important thing that I shouldn't forget", "Inbox", 1523624925L, null, false));
+        add(new Task("A very important thing that I shouldn't forget at any time. Especially now that I have written it down", "Inbox", 1523624925L, null, false));
         add(new Task("Finish presentation for Monday", "Work", 1523624925L, null, false));
         add(new Task("Write on book", "Trash", 1523624925L, 1523623545L, true));
         add(new Task("Get Groceries", "Trash", 1523624925L, 1523623545L, true));
