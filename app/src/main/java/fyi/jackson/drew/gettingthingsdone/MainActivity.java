@@ -23,6 +23,7 @@ import java.util.List;
 import fyi.jackson.drew.gettingthingsdone.data.DummyData;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
+import fyi.jackson.drew.gettingthingsdone.ui.NewTaskDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private RecyclerView rvTaskList;
     private TaskAdapter taskAdapter;
+
+    private NewTaskDialog newTaskDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupFab() {
+        newTaskDialog = new NewTaskDialog(this);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                newTaskDialog.showHideDialog();
             }
         });
     }
