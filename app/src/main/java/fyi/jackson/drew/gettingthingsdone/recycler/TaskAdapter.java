@@ -102,10 +102,13 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Task task = (Task) sortedTaskList.get(position);
         holder.cbTask.setText(task.getName());
         holder.cbTask.setChecked(task.getDone());
+        int paintFlags = holder.cbTask.getPaintFlags();
         if (task.getDone()) {
-            holder.cbTask.setPaintFlags(
-                    holder.cbTask.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            paintFlags |= Paint.STRIKE_THRU_TEXT_FLAG;
+        } else {
+            paintFlags &= (~ Paint.STRIKE_THRU_TEXT_FLAG);
         }
+        holder.cbTask.setPaintFlags(paintFlags);
     }
 
     private class BucketBottom {
@@ -126,6 +129,8 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         sortedTaskList = new ArrayList<>();
         try {
             JSONObject dict = new JSONObject();
+            // put Inbox first
+            dict.put("Inbox", new JSONArray());
             for (Task task : rawTaskList) {
                 if (!dict.has(task.getBucket())) {
                     dict.put(task.getBucket(), new JSONArray());

@@ -26,5 +26,8 @@ public class DummyData {
         add(new Task("Finish presentation for Monday", "Work", 1523624925L, null, false));
         add(new Task("Write on book", "Trash", 1523624925L, 1523623545L, true));
         add(new Task("Get Groceries", "Trash", 1523624925L, 1523623545L, true));
+        for (int i = 1; i <= 100; i++) {
+            add(new Task("Task #" + i, "Work", 1523628945L, null, false));
+        }
     }};
 }
