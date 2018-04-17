@@ -1,8 +1,10 @@
 package fyi.jackson.drew.gettingthingsdone;
 
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -17,11 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.widget.EditText;
 
 import java.util.List;
 
-import fyi.jackson.drew.gettingthingsdone.data.DummyData;
+import fyi.jackson.drew.gettingthingsdone.data.AppDatabase;
+import fyi.jackson.drew.gettingthingsdone.data.AppViewModel;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
+import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
 import fyi.jackson.drew.gettingthingsdone.ui.NewTaskDialog;
 
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private RecyclerView rvTaskList;
     private TaskAdapter taskAdapter;
+
+    private AppViewModel viewModel;
+    private AppDatabase appDatabase;
 
     private NewTaskDialog newTaskDialog;
 
@@ -66,9 +74,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupComponents() {
+        setupViewModel();
         setupToolbarAndDrawer();
         setupFab();
         setupRecycler();
+    }
+
+    private void setupViewModel() {
+        viewModel = new AppViewModel();
+        appDatabase = AppDatabase.getInstance(this);
+        viewModel.getItems(appDatabase.taskDao()).observe(this, new Observer<List<Task>>() {
+            @Override
+            public void onChanged(@Nullable List<Task> tasks) {
+                taskAdapter.updateTaskList(tasks);
+            }
+        });
+        viewModel.getBuckets(appDatabase.bucketDao()).observe(this, new Observer<List<Bucket>>() {
+            @Override
+            public void onChanged(@Nullable List<Bucket> buckets) {
+                fillMenu(buckets);
+            }
+        });
     }
 
     private void setupToolbarAndDrawer() {
@@ -99,16 +125,27 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
-
-        fillMenu(DummyData.buckets);
     }
 
     private void setupFab() {
         newTaskDialog = new NewTaskDialog(this);
+        final EditText etTaskInput = findViewById(R.id.et_task_input);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (newTaskDialog.isVisible()) {
+                    String taskName = etTaskInput.getText().toString();
+                    etTaskInput.setText("");
+
+                    Task task = new Task();
+                    task.setName(taskName);
+                    task.setBucket("Inbox");
+
+                    if (!taskName.equals("")){
+                        viewModel.createTask(task, appDatabase.taskDao());
+                    }
+                }
                 newTaskDialog.showHideDialog();
             }
         });
@@ -117,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecycler() {
         rvTaskList = findViewById(R.id.rv_task_list);
 
-        taskAdapter = new TaskAdapter(DummyData.tasks);
+        taskAdapter = new TaskAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         rvTaskList.setAdapter(taskAdapter);

@@ -143,9 +143,11 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             while(keys.hasNext()) {
                 String key = (String)keys.next();
                 JSONArray taskListForBucket = dict.getJSONArray(key);
-                sortedTaskList.add(new Bucket(key));
+                sortedTaskList.add(new Bucket(key, null));
                 for (int i = 0; i < taskListForBucket.length(); i++) {
-                    sortedTaskList.add(taskListForBucket.get(i));
+                    Task task = (Task) taskListForBucket.get(i);
+                    if (task.getDone() == null) task.setDone(false);
+                    sortedTaskList.add(task);
                 }
                 sortedTaskList.add(new BucketBottom());
             }

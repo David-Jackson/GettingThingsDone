@@ -62,6 +62,10 @@ public class NewTaskDialog {
         updateFabIcon();
     }
 
+    public boolean isVisible() {
+        return this.dialogVisible;
+    }
+
     private void circularRevealDialog() {
         int revealStartX = dialogNewTask.getWidth();
         int revealStartY = dialogNewTask.getHeight();
