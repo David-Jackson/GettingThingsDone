@@ -20,7 +20,7 @@ public interface BucketDao {
     LiveData<Bucket> getBucket(long id);
 
     @Insert
-    long insert(Bucket... bucket);
+    List<Long> insert(Bucket... bucket);
 
     @Delete
     void delete(Bucket bucket);
