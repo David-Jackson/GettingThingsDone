@@ -1,9 +1,11 @@
 package fyi.jackson.drew.gettingthingsdone.recycler;
 
 import android.graphics.Paint;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,17 +14,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import fyi.jackson.drew.gettingthingsdone.R;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
+import fyi.jackson.drew.gettingthingsdone.recycler.helpers.OnStartDragListener;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketBottomViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.TaskViewHolder;
 
-public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements ItemTouchHelperAdapter  {
 
     private static final String TAG = "TaskAdapter";
 
@@ -32,10 +37,15 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     List<Object> sortedTaskList;
 
-    public TaskAdapter(){}
+    private OnStartDragListener onStartDragListener;
 
-    public TaskAdapter(List<Task> taskList) {
+    public TaskAdapter(OnStartDragListener onStartDragListener){
+        this.onStartDragListener = onStartDragListener;
+    }
+
+    public TaskAdapter(List<Task> taskList, OnStartDragListener onStartDragListener) {
         setTaskList(taskList);
+        this.onStartDragListener = onStartDragListener;
         Log.d(TAG, "TaskAdapter: making list of length: " + taskList.size());
     }
 
@@ -98,7 +108,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.tvBucketName.setText(bucket.getName());
     }
 
-    private void onBindTaskViewHolder(TaskViewHolder holder, int position) {
+    private void onBindTaskViewHolder(final TaskViewHolder holder, int position) {
         Task task = (Task) sortedTaskList.get(position);
         holder.cbTask.setText(task.getName());
         holder.cbTask.setChecked(task.getDone());
@@ -109,6 +119,30 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             paintFlags &= (~ Paint.STRIKE_THRU_TEXT_FLAG);
         }
         holder.cbTask.setPaintFlags(paintFlags);
+
+        // Start a drag whenever the handle view it touched
+        holder.itemView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    onStartDragListener.onStartDrag(holder);
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(sortedTaskList, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        sortedTaskList.remove(position);
+        notifyItemRemoved(position);
     }
 
     private class BucketBottom {
@@ -155,4 +189,6 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             e.printStackTrace();
         }
     }
+
+
 }

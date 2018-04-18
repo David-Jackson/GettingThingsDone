@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -28,6 +29,8 @@ import fyi.jackson.drew.gettingthingsdone.data.AppViewModel;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
+import fyi.jackson.drew.gettingthingsdone.recycler.TaskItemTouchHelperCallback;
+import fyi.jackson.drew.gettingthingsdone.recycler.helpers.OnStartDragListener;
 import fyi.jackson.drew.gettingthingsdone.ui.Helpers;
 import fyi.jackson.drew.gettingthingsdone.ui.NewTaskDialog;
 
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private RecyclerView rvTaskList;
     private TaskAdapter taskAdapter;
+    private ItemTouchHelper itemTouchHelper;
 
     private AppViewModel viewModel;
     private AppDatabase appDatabase;
@@ -172,11 +176,20 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecycler() {
         rvTaskList = findViewById(R.id.rv_task_list);
 
-        taskAdapter = new TaskAdapter();
+        taskAdapter = new TaskAdapter(new OnStartDragListener() {
+            @Override
+            public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                itemTouchHelper.startDrag(viewHolder);
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         rvTaskList.setAdapter(taskAdapter);
         rvTaskList.setLayoutManager(layoutManager);
+
+        ItemTouchHelper.Callback callback = new TaskItemTouchHelperCallback(taskAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(rvTaskList);
     }
 
     // This method dynamically fills the drawer menu based on the Buckets data
