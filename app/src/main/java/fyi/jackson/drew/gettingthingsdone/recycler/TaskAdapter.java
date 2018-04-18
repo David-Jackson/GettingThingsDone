@@ -21,13 +21,14 @@ import java.util.List;
 import fyi.jackson.drew.gettingthingsdone.R;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
+import fyi.jackson.drew.gettingthingsdone.recycler.helpers.ItemTouchHelperAdapter;
 import fyi.jackson.drew.gettingthingsdone.recycler.helpers.OnStartDragListener;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketBottomViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.TaskViewHolder;
 
 public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements ItemTouchHelperAdapter  {
+        implements ItemTouchHelperAdapter {
 
     private static final String TAG = "TaskAdapter";
 

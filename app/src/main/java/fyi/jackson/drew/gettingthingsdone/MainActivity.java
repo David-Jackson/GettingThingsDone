@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -20,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.EditText;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ import fyi.jackson.drew.gettingthingsdone.data.AppViewModel;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
-import fyi.jackson.drew.gettingthingsdone.recycler.TaskItemTouchHelperCallback;
+import fyi.jackson.drew.gettingthingsdone.recycler.helpers.TaskItemTouchHelperCallback;
 import fyi.jackson.drew.gettingthingsdone.recycler.helpers.OnStartDragListener;
 import fyi.jackson.drew.gettingthingsdone.ui.Helpers;
 import fyi.jackson.drew.gettingthingsdone.ui.NewTaskDialog;

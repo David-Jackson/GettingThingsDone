@@ -1,4 +1,4 @@
-package fyi.jackson.drew.gettingthingsdone.recycler;
+package fyi.jackson.drew.gettingthingsdone.recycler.helpers;
 
 import android.graphics.Canvas;
 import android.support.v7.widget.GridLayoutManager;

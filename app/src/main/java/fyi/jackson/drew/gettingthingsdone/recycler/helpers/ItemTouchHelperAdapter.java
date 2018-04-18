@@ -1,4 +1,4 @@
-package fyi.jackson.drew.gettingthingsdone.recycler;
+package fyi.jackson.drew.gettingthingsdone.recycler.helpers;
 
 public interface ItemTouchHelperAdapter {
     /**
