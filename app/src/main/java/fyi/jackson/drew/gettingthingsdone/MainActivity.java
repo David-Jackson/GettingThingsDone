@@ -28,6 +28,7 @@ import fyi.jackson.drew.gettingthingsdone.data.AppViewModel;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Bucket;
 import fyi.jackson.drew.gettingthingsdone.data.entities.Task;
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
+import fyi.jackson.drew.gettingthingsdone.ui.Helpers;
 import fyi.jackson.drew.gettingthingsdone.ui.NewTaskDialog;
 
 public class MainActivity extends AppCompatActivity {
@@ -180,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
 
     // This method dynamically fills the drawer menu based on the Buckets data
     private void fillMenu(List<Bucket> buckets) {
+        Helpers.organizeBuckets(buckets);
+
         Menu menu = navigationView.getMenu();
         menu.clear();
         SubMenu subMenu = menu.addSubMenu("Buckets");
