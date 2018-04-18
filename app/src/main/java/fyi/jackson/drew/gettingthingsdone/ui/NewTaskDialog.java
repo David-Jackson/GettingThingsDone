@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
@@ -17,22 +18,29 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.EditText;
 
 import fyi.jackson.drew.gettingthingsdone.R;
 import fyi.jackson.drew.gettingthingsdone.animation.EndAnimatorListener;
 
 public class NewTaskDialog {
 
+    public static final int MODE_NEW_TASK = 872;
+    public static final int MODE_NEW_BUCKET = 418;
+
     private boolean dialogVisible = false;
+    private int mode = MODE_NEW_TASK;
     private CardView dialogNewTask;
     private View dialogScrim;
+    private EditText etTaskInput;
 
-    private FloatingActionButton fab;
+    public FloatingActionButton fab;
     private AnimatedVectorDrawable avdAddToDone, avdDoneToAdd;
 
     public NewTaskDialog(Activity activity) {
         dialogNewTask = activity.findViewById(R.id.dialog_new_task);
         dialogScrim = activity.findViewById(R.id.new_task_scrim);
+        etTaskInput = activity.findViewById(R.id.et_task_input);
         fab = activity.findViewById(R.id.fab);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -60,10 +68,15 @@ public class NewTaskDialog {
         updateDialogLayoutParams();
         updateScrim();
         updateFabIcon();
+        if (!dialogVisible) setModeTask();
     }
 
-    public boolean isVisible() {
-        return this.dialogVisible;
+    public void showDialog() {
+        if (!dialogVisible) showHideDialog();
+    }
+
+    public void hideDialog() {
+        if (dialogVisible) showHideDialog();
     }
 
     private void circularRevealDialog() {
@@ -100,10 +113,10 @@ public class NewTaskDialog {
     }
 
     private void updateDialogLayoutParams() {
-        CoordinatorLayout.LayoutParams params =
+        CoordinatorLayout.LayoutParams dialogLayoutParams =
                 (CoordinatorLayout.LayoutParams) dialogNewTask.getLayoutParams();
 
-        params.gravity = dialogVisible ? Gravity.CENTER : Gravity.BOTTOM;
+        dialogLayoutParams.gravity = dialogVisible ? Gravity.CENTER : Gravity.BOTTOM;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             AutoTransition transition = new AutoTransition();
@@ -111,7 +124,7 @@ public class NewTaskDialog {
             TransitionManager.beginDelayedTransition((ViewGroup) dialogNewTask.getRootView(), transition);
         }
 
-        dialogNewTask.setLayoutParams(params);
+        dialogNewTask.setLayoutParams(dialogLayoutParams);
     }
 
     private void updateScrim() {
@@ -133,5 +146,47 @@ public class NewTaskDialog {
             fab.setImageResource(
                     dialogVisible ? R.drawable.ic_done_black_24dp : R.drawable.ic_add_black_24dp);
         }
+    }
+
+    public boolean isVisible() {
+        return this.dialogVisible;
+    }
+
+    public int getMode() {
+        return this.mode;
+    }
+
+    public void setModeTask() {
+        this.mode = this.MODE_NEW_TASK;
+        setHint(R.string.dialog_hint_new_task);
+    }
+
+    public void setModeBucket() {
+        this.mode = this.MODE_NEW_BUCKET;
+        setHint(R.string.dialog_hint_new_bucket);
+    }
+
+    public Editable getText() {
+        return this.etTaskInput.getText();
+    }
+
+    public void setText(CharSequence text) {
+        this.etTaskInput.setText(text);
+    }
+
+    public void setHint(CharSequence hint) {
+        this.etTaskInput.setHint(hint);
+    }
+
+    public void setHint(int redId) {
+        this.etTaskInput.setHint(redId);
+    }
+
+    public boolean requestFocus() {
+        return this.etTaskInput.requestFocus();
+    }
+
+    public void clearFocus() {
+        this.etTaskInput.clearFocus();
     }
 }

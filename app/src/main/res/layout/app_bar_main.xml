@@ -42,20 +42,11 @@
         android:layout_gravity="bottom">
 
         <EditText
-            android:id="@+id/et_new_task"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:hint="Enter new task"/>
-
-
-        <EditText
             android:id="@+id/et_task_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp" />
+            android:layout_margin="24dp"
+            android:hint="@string/dialog_hint_new_task" />
     </android.support.v7.widget.CardView>
 
     <android.support.design.widget.FloatingActionButton

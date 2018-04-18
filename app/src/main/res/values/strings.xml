@@ -5,6 +5,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="dialog_hint_new_task">Enter new task</string>
+    <string name="dialog_hint_new_bucket">Enter new bucket name</string>
+
     <string name="action_process">Process</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>

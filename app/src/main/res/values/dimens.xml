@@ -17,7 +17,7 @@
 
     <dimen name="card_margin_horz">16dp</dimen>
     <dimen name="card_margin_vert">12dp</dimen>
-    <dimen name="card_padding_horz">16dp</dimen>
+    <dimen name="card_padding_horz">24dp</dimen>
     <dimen name="card_padding_vert">24dp</dimen>
 
     <dimen name="card_title_text_size">24sp</dimen>

@@ -10,11 +10,11 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -34,9 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    private static final String INTENT_MENU_METHOD = "INTENT_MENU_METHOD";
+    private static final String INTENT_SELECT_BUCKET = "INTENT_SELECT_BUCKET";
+    private static final String INTENT_CREATE_BUCKET = "INTENT_CREATE_BUCKET";
     private static final String INTENT_BUCKET_NAME = "INTENT_BUCKET_NAME";
+    private static final int MENU_GROUP_ID_BUCKETS = 667;
 
-    private FloatingActionButton fab;
     private NavigationView navigationView;
     private RecyclerView rvTaskList;
     private TaskAdapter taskAdapter;
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_process:
-                Snackbar.make(fab, "Process Action Selected", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(newTaskDialog.fab, "Process Action Selected", Snackbar.LENGTH_LONG).show();
                 return true;
         }
 
@@ -112,11 +115,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         // Handle navigation view item clicks here.
-                        int id = item.getItemId();
-                        String bucketName = item.getIntent().getStringExtra(INTENT_BUCKET_NAME);
-
-                        Snackbar.make(fab, bucketName + " selected", Snackbar.LENGTH_LONG).show();
-
+                        switch (item.getIntent().getStringExtra(INTENT_MENU_METHOD)) {
+                            case INTENT_SELECT_BUCKET:
+                                String bucketName = item.getIntent().getStringExtra(INTENT_BUCKET_NAME);
+                                Snackbar.make(newTaskDialog.fab, bucketName + " selected", Snackbar.LENGTH_LONG).show();
+                                newTaskDialog.hideDialog();
+                                break;
+                            case INTENT_CREATE_BUCKET:
+                                newTaskDialog.setModeBucket();
+                                newTaskDialog.showDialog();
+                                break;
+                        }
                         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                         drawer.closeDrawer(GravityCompat.START);
                         return true;
@@ -129,22 +138,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupFab() {
         newTaskDialog = new NewTaskDialog(this);
-        final EditText etTaskInput = findViewById(R.id.et_task_input);
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        newTaskDialog.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newTaskDialog.isVisible()) {
-                    String taskName = etTaskInput.getText().toString();
-                    etTaskInput.setText("");
+                    String inputString = newTaskDialog.getText().toString();
+                    newTaskDialog.setText("");
 
-                    Task task = new Task();
-                    task.setName(taskName);
-                    task.setBucket("Inbox");
-
-                    if (!taskName.equals("")){
-                        viewModel.createTask(task, appDatabase.taskDao());
+                    if (!inputString.equals("")){
+                        switch (newTaskDialog.getMode()) {
+                            case NewTaskDialog.MODE_NEW_TASK:
+                                Task task = new Task();
+                                task.setName(inputString);
+                                task.setBucket("Inbox");
+                                viewModel.createTask(task, appDatabase.taskDao());
+                                break;
+                            case NewTaskDialog.MODE_NEW_BUCKET:
+                                Bucket bucket = new Bucket(inputString, null);
+                                viewModel.createBucket(bucket, appDatabase.bucketDao());
+                                break;
+                        }
                     }
+                    newTaskDialog.clearFocus();
+                } else {
+                    newTaskDialog.requestFocus();
                 }
                 newTaskDialog.showHideDialog();
             }
@@ -164,9 +181,11 @@ public class MainActivity extends AppCompatActivity {
     // This method dynamically fills the drawer menu based on the Buckets data
     private void fillMenu(List<Bucket> buckets) {
         Menu menu = navigationView.getMenu();
+        menu.clear();
         SubMenu subMenu = menu.addSubMenu("Buckets");
 
-        for (int i = 0; i < buckets.size(); i++) {
+        int i;
+        for (i = 0; i < buckets.size(); i++) {
             Bucket bucket = buckets.get(i);
             String bucketName = bucket.getName();
             Integer iconId = bucket.getIconId();
@@ -174,13 +193,24 @@ public class MainActivity extends AppCompatActivity {
             if (iconId == null) iconId = R.drawable.ic_folder_black_24dp;
 
             Intent menuItemIntent = new Intent();
+            menuItemIntent.putExtra(INTENT_MENU_METHOD, INTENT_SELECT_BUCKET);
             menuItemIntent.putExtra(INTENT_BUCKET_NAME, bucketName);
 
-            subMenu.add(0, Menu.FIRST + i, Menu.FIRST, bucketName)
+            subMenu.add(MENU_GROUP_ID_BUCKETS, Menu.FIRST + i, Menu.FIRST, bucketName)
                     .setCheckable(true)
                     .setIntent(menuItemIntent)
                     .setIcon(iconId);
         }
+
+        // Add a final menu item for adding new buckets
+        Intent createBucketIntent = new Intent();
+        createBucketIntent.putExtra(INTENT_MENU_METHOD, INTENT_CREATE_BUCKET);
+
+        subMenu.add(MENU_GROUP_ID_BUCKETS, Menu.FIRST + i, Menu.FIRST, "Create Bucket")
+                .setCheckable(false)
+                .setIntent(createBucketIntent)
+                .setIcon(R.drawable.ic_add_black_24dp);
+
     }
 
 }
