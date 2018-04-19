@@ -30,9 +30,9 @@ public class NewTaskDialog {
 
     private boolean dialogVisible = false;
     private int mode = MODE_NEW_TASK;
-    private CardView dialogNewTask;
+    public CardView dialogNewTask;
     private View dialogScrim;
-    private EditText etTaskInput;
+    public EditText etTaskInput;
 
     public FloatingActionButton fab;
     private AnimatedVectorDrawable avdAddToDone, avdDoneToAdd;

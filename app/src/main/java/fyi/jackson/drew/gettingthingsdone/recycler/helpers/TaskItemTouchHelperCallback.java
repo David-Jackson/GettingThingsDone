@@ -5,6 +5,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.TaskViewHolder;
 
 public class TaskItemTouchHelperCallback extends ItemTouchHelper.Callback {
@@ -44,13 +45,28 @@ public class TaskItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
-        if (source.getItemViewType() != target.getItemViewType()) {
-            return false;
+        boolean allowSwap = true;
+
+        switch (target.getItemViewType()) {
+            case TaskAdapter.BUCKET_TOP:
+                allowSwap = source.getAdapterPosition() < target.getAdapterPosition();
+                break;
+            case TaskAdapter.BUCKET_BOTTOM:
+                allowSwap = source.getAdapterPosition() > target.getAdapterPosition();
         }
 
-        // Notify the adapter of the move
-        adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
-        return true;
+        if (allowSwap) {
+            if (source.getAdapterPosition() < target.getAdapterPosition()) {
+                for (int i = source.getAdapterPosition(); i < target.getAdapterPosition(); i++) {
+                    adapter.onItemMove(i, i + 1);
+                }
+            } else {
+                for (int i = source.getAdapterPosition(); i > target.getAdapterPosition(); i--) {
+                    adapter.onItemMove(i, i - 1);
+                }
+            }
+        }
+        return allowSwap;
     }
 
     @Override

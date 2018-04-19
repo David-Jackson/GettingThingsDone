@@ -1,5 +1,6 @@
 package fyi.jackson.drew.gettingthingsdone.recycler;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -117,6 +118,8 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.tvBucketName.setText(bucket.getName());
     }
 
+    // TODO: 4/19/2018 Review Accessibility with reorder functionality
+    @SuppressLint("ClickableViewAccessibility")
     private void onBindTaskViewHolder(final TaskViewHolder holder, int position) {
         Task task = (Task) sortedTaskList.get(position);
         holder.tvTaskName.setText(task.getName());
