@@ -21,6 +21,9 @@ public interface TaskDao {
     @Query("SELECT * FROM task WHERE bucket=:bucketName")
     LiveData<List<Task>> getTasksFromBucket(String bucketName);
 
+    @Query("SELECT t.id, t.name, b.name AS bucket, t.created, t.done FROM Bucket AS b LEFT OUTER JOIN Task AS t ON t.bucket = b.name")
+    LiveData<List<Task>> getItemsAndBuckets();
+
     @Insert
     long insert(Task task);
 

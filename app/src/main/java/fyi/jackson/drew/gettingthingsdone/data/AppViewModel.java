@@ -30,6 +30,10 @@ public class AppViewModel extends ViewModel {
         return taskDao.getTasks();
     }
 
+    public LiveData<List<Task>> getItemsAndBuckets(TaskDao taskDao) {
+        return taskDao.getItemsAndBuckets();
+    }
+
     public LiveData<Bucket> getBucket(BucketDao bucketDao, long id) {
         return bucketDao.getBucket(id);
     }
