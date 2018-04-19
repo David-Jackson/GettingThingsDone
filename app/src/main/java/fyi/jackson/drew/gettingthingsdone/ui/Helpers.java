@@ -11,6 +11,7 @@ public class Helpers {
             for (int j = 0; j < i; j++) {
                 String a = buckets.get(j).getName();
                 String b = buckets.get(j + 1).getName();
+                if (a.equals("Inbox") || b.equals("Trash")) continue;
                 if (b.equals("Inbox") || a.equals("Trash") || a.compareTo(b) > 0) {
                     Collections.swap(buckets, j, j + 1);
                 }

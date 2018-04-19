@@ -25,14 +25,16 @@ import fyi.jackson.drew.gettingthingsdone.recycler.helpers.ItemTouchHelperAdapte
 import fyi.jackson.drew.gettingthingsdone.recycler.helpers.OnStartDragListener;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketBottomViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.BucketViewHolder;
+import fyi.jackson.drew.gettingthingsdone.recycler.holders.NoTaskViewHolder;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.TaskViewHolder;
+import fyi.jackson.drew.gettingthingsdone.ui.Helpers;
 
 public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements ItemTouchHelperAdapter {
 
     private static final String TAG = "TaskAdapter";
 
-    public static final int BUCKET_TOP = 1, TASK = 2, BUCKET_BOTTOM = 3;
+    public static final int BUCKET_TOP = 1, TASK = 2, NO_TASK = 3, BUCKET_BOTTOM = 4;
 
     List<Task> rawTaskList;
 
@@ -64,6 +66,10 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 v = inflater.inflate(R.layout.view_holder_task, parent, false);
                 viewHolder = new TaskViewHolder(v);
                 break;
+            case NO_TASK:
+                v = inflater.inflate(R.layout.view_holder_no_task, parent, false);
+                viewHolder = new NoTaskViewHolder(v);
+                break;
             default: // BUCKET_BOTTOM
                 v = inflater.inflate(R.layout.view_holder_bucket_bottom, parent, false);
                 viewHolder = new BucketBottomViewHolder(v);
@@ -84,6 +90,8 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return BUCKET_TOP;
         } else if (item instanceof Task) {
             return TASK;
+        } else if (item instanceof NoTask) {
+            return NO_TASK;
         } else if (item instanceof BucketBottom) {
             return BUCKET_BOTTOM;
         }
@@ -99,7 +107,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case TASK:
                 onBindTaskViewHolder((TaskViewHolder) holder, position);
                 break;
-            default: // BUCKET_BOTTOM
+            default: // BUCKET_BOTTOM or NO_TASK
                 break;
         }
     }
@@ -150,6 +158,10 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public BucketBottom(){}
     }
 
+    private class NoTask {
+        public NoTask(){}
+    }
+
     public void updateTaskList(List<Task> taskList) {
         setTaskList(taskList);
         notifyDataSetChanged();
@@ -163,27 +175,32 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private void processTaskList() {
         sortedTaskList = new ArrayList<>();
         try {
+
+            List<Bucket> buckets = new ArrayList<>();
             JSONObject dict = new JSONObject();
-            // put Inbox first
-            dict.put("Inbox", new JSONArray());
             for (Task task : rawTaskList) {
                 if (!dict.has(task.getBucket())) {
+                    buckets.add(new Bucket(task.getBucket(), null));
                     dict.put(task.getBucket(), new JSONArray());
                 }
                 dict.accumulate(task.getBucket(), task);
             }
 
-            Iterator<?> keys = dict.keys();
+            Helpers.organizeBuckets(buckets);
 
-            while(keys.hasNext()) {
-                String key = (String)keys.next();
-                JSONArray taskListForBucket = dict.getJSONArray(key);
-                sortedTaskList.add(new Bucket(key, null));
+            for (Bucket bucket : buckets) {
+                String bucketName = bucket.getName();
+                JSONArray taskListForBucket = dict.getJSONArray(bucketName);
+                sortedTaskList.add(bucket);
+                int totalNewRows = 0;
                 for (int i = 0; i < taskListForBucket.length(); i++) {
                     Task task = (Task) taskListForBucket.get(i);
+                    if (task.getName() == null) continue;
                     if (task.getDone() == null) task.setDone(false);
                     sortedTaskList.add(task);
+                    totalNewRows++;
                 }
+                if (totalNewRows == 0) sortedTaskList.add(new NoTask());
                 sortedTaskList.add(new BucketBottom());
             }
         } catch (JSONException e) {

@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewModel() {
         viewModel = new AppViewModel();
         appDatabase = AppDatabase.getInstance(this);
-        viewModel.getItems(appDatabase.taskDao()).observe(this, new Observer<List<Task>>() {
+        viewModel.getItemsAndBuckets(appDatabase.taskDao()).observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(@Nullable List<Task> tasks) {
                 taskAdapter.updateTaskList(tasks);
