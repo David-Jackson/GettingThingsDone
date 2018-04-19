@@ -119,7 +119,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void onBindTaskViewHolder(final TaskViewHolder holder, int position) {
         Task task = (Task) sortedTaskList.get(position);
-        holder.cbTask.setText(task.getName());
+        holder.tvTaskName.setText(task.getName());
         holder.cbTask.setChecked(task.getDone());
         int paintFlags = holder.cbTask.getPaintFlags();
         if (task.getDone()) {
@@ -127,10 +127,10 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             paintFlags &= (~ Paint.STRIKE_THRU_TEXT_FLAG);
         }
-        holder.cbTask.setPaintFlags(paintFlags);
+        holder.tvTaskName.setPaintFlags(paintFlags);
 
         // Start a drag whenever the handle view it touched
-        holder.itemView.setOnTouchListener(new View.OnTouchListener() {
+        holder.ivReorder.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
