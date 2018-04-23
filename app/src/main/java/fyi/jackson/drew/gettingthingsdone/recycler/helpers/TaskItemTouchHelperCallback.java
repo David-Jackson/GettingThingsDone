@@ -4,11 +4,14 @@ import android.graphics.Canvas;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 
 import fyi.jackson.drew.gettingthingsdone.recycler.TaskAdapter;
 import fyi.jackson.drew.gettingthingsdone.recycler.holders.TaskViewHolder;
 
 public class TaskItemTouchHelperCallback extends ItemTouchHelper.Callback {
+
+    private static final String TAG = "TaskItemTouchHelperCallback";
 
     public static final float ALPHA_FULL = 1.0f;
     private final ItemTouchHelperAdapter adapter;

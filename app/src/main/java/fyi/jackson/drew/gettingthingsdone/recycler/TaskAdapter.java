@@ -2,9 +2,9 @@ package fyi.jackson.drew.gettingthingsdone.recycler;
 
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import fyi.jackson.drew.gettingthingsdone.R;
@@ -65,7 +64,12 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 break;
             case TASK:
                 v = inflater.inflate(R.layout.view_holder_task, parent, false);
-                viewHolder = new TaskViewHolder(v);
+                viewHolder = new TaskViewHolder(v) {
+                    @Override
+                    public void onItemSelected() {
+                        restoreNoTaskItems();
+                    }
+                };
                 break;
             case NO_TASK:
                 v = inflater.inflate(R.layout.view_holder_no_task, parent, false);
@@ -133,11 +137,21 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.tvTaskName.setPaintFlags(paintFlags);
 
         // Start a drag whenever the handle view it touched
+        holder.ivReorder.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+
+                Log.d(TAG, "onDrag: " + event.getAction());
+                return false;
+            }
+        });
         holder.ivReorder.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                Log.d(TAG, "onTouch: " + event.getAction());
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     onStartDragListener.onStartDrag(holder);
+                    removeNoTaskItems();
                 }
                 return false;
             }
@@ -208,6 +222,26 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void removeNoTaskItems() {
+        for (int i = 0; i < sortedTaskList.size(); i++) {
+            if (sortedTaskList.get(i) instanceof NoTask) {
+                sortedTaskList.remove(i);
+                notifyItemRemoved(i);
+                i--;
+            }
+        }
+    }
+
+    private void restoreNoTaskItems() {
+        for (int i = 0; i < sortedTaskList.size() - 1; i++) {
+            if (sortedTaskList.get(i) instanceof Bucket &&
+                    sortedTaskList.get(i + 1) instanceof BucketBottom) {
+                sortedTaskList.add(i + 1, new NoTask());
+                notifyItemInserted(i + 1);
+            }
         }
     }
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import fyi.jackson.drew.gettingthingsdone.R;
 import fyi.jackson.drew.gettingthingsdone.recycler.helpers.ItemTouchHelperViewHolder;
 
-public class TaskViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
+public abstract class TaskViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
     public View itemView;
     public CheckBox cbTask;
@@ -23,11 +23,6 @@ public class TaskViewHolder extends RecyclerView.ViewHolder implements ItemTouch
         cbTask = v.findViewById(R.id.cb_task_status);
         tvTaskName = v.findViewById(R.id.tv_task_name);
         ivReorder = v.findViewById(R.id.iv_reorder);
-    }
-
-    @Override
-    public void onItemSelected() {
-
     }
 
     @Override
